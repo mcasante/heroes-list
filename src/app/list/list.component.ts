@@ -22,7 +22,7 @@ export class ListComponent {
 
   ngOnInit() {
     this.hero
-      .list()
+      .list({ offset: 0 })
       .pipe(
         catchError((error) => {
           return throwError(error);
