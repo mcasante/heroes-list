@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, map } from "rxjs";
 
 import { Hero } from "../models/hero";
 import { HeroListOptions } from '../models/hero-list-options';
@@ -10,9 +10,10 @@ const defaultParams = {
   apikey: public_key,
 }
 interface Response {
-  count: number
   limit: number
   offset: number
+  count: number
+  total: number
   results: Hero[]
 }
 
@@ -24,13 +25,14 @@ export class HeroService {
 
   list(config: HeroListOptions): Observable<Response> {
 
-    let params = new HttpParams()
     const options = { ...defaultParams, ...config }
 
-    Object.entries(options).forEach(([key, value]) => {
-     params = params.set(key, value);
-    })
+    const params = Object.entries(options)
+      .reduce((params, [key, value]) => {
+        return params.set(key, value);
+      }, new HttpParams())
 
-    return this.http.get<Response>('public/characters', { params })
+    return this.http.get<{ data: Response }>('public/characters', { params })
+      .pipe(map((response) => response.data))
   }
 }

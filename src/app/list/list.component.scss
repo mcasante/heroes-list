@@ -1,0 +1,36 @@
+mat-card {
+  margin-top: 1rem;
+}
+
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  h1 {
+    margin: 0;
+  }
+}
+
+.thumbnail {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 5px;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.mat-column {
+  &-thumbnail {
+    width: 35px;
+    text-align: center;
+  }
+
+  &-id {
+    width: 60px;
+  }
+
+  &-name {
+    width: 200px;
+  }
+}
