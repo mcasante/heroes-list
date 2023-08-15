@@ -8,18 +8,20 @@ import { AppRoutingModule } from './modules/app-routing.module';
 import { MaterialModule } from './modules/material.module';
 
 import { ApiInterceptor } from "./core/interceptors/api.interceptor";
+import { LocalStorageService } from './core/services/localStorage/local-storage.service';
+import { CanvasService } from './core/services/canvas/canvas.service';
 
 import { AppComponent } from './main/main.component';
-import { ListComponent } from './list/list.component';
-import { FormComponent } from './form/form.component';
-import { ImageUploadComponent } from './image-upload/image-upload.component';
+import { ImageUploadComponent } from './components/shared/image-upload/image-upload.component';
+import { CreateHeroFormComponent } from './components/create-hero-form/create-hero-form.component';
+import { HeroListComponent } from './pages/hero-list/hero-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ListComponent,
-    FormComponent,
     ImageUploadComponent,
+    CreateHeroFormComponent,
+    HeroListComponent,
   ],
   imports: [
     BrowserModule,
@@ -31,6 +33,8 @@ import { ImageUploadComponent } from './image-upload/image-upload.component';
     ReactiveFormsModule
   ],
   providers: [
+    LocalStorageService,
+    CanvasService,
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

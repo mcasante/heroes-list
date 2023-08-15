@@ -1,14 +1,24 @@
 mat-card {
   margin-top: 1rem;
-}
 
-mat-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  h1 {
-    margin: 0;
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 {
+      margin: 0;
+    }
   }
+
+  .table-holder {
+    overflow-x: auto;
+
+    table {
+      min-width: 700px;
+      width: 100%;
+    }
+  }
+
 }
 
 .thumbnail {

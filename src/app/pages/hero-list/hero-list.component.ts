@@ -3,17 +3,17 @@ import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 import { PageEvent } from '@angular/material/paginator';
 
-import { HeroService } from '../core/heroes/hero.service';
-import { Hero } from "../core/models/hero";
+import { HeroService } from '../../core/services/heroes/hero.service';
+import { Hero } from "../../core/models/hero";
 import { MatDialog } from '@angular/material/dialog';
-import { FormComponent } from '../form/form.component';
+import { CreateHeroFormComponent } from '../../components/create-hero-form/create-hero-form.component';
 
 @Component({
-  selector: 'app-list',
-  templateUrl: './list.component.html',
-  styleUrls: ['./list.component.scss']
+  selector: 'app-hero-list',
+  templateUrl: './hero-list.component.html',
+  styleUrls: ['./hero-list.component.scss']
 })
-export class ListComponent {
+export class HeroListComponent {
   heroes!: Hero[]
   limit: number = 10
   offset: number = 0
@@ -55,7 +55,7 @@ export class ListComponent {
   }
 
   openDialog() {
-    this.dialog.open(FormComponent, {
+    this.dialog.open(CreateHeroFormComponent, {
       width: '320px',
       autoFocus: false
     });
