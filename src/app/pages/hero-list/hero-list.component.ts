@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { takeUntil } from "rxjs/operators";
 import { Subject, combineLatest, map } from "rxjs";
 import { PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { HeroService } from '../../core/services/heroes/hero.service';
 import { Hero, HeroListResponse } from "../../core/models/hero";
 import { MatDialog } from '@angular/material/dialog';
 import { CreateHeroFormComponent } from '../../components/create-hero-form/create-hero-form.component';
+import { ConfirmDialogComponent } from 'src/app/components/shared/confirm-dialog/confirm-dialog.component';
 
 const clamp = (
     num: number,
@@ -29,15 +31,16 @@ export class HeroListComponent {
     pageIndex: 0,
     pageSize: 10,
     total: 0,
-    pageSizeOptions: [1, 5, 10]
+    pageSizeOptions: [5, 10, 20, 50]
   }
 
   destroy$ = new Subject<void>();
 
   constructor(
     private readonly hero: HeroService,
-    public readonly dialog: MatDialog
-  ) {}
+    public readonly dialog: MatDialog,
+    private _snackBar: MatSnackBar
+    ) {}
 
   ngOnInit() {
     combineLatest([
@@ -87,17 +90,45 @@ export class HeroListComponent {
   }
 
   openDialog(hero?: Hero) {
-    this.dialog.open(CreateHeroFormComponent, {
+    const dialogRef = this.dialog.open(CreateHeroFormComponent, {
       width: '320px',
       autoFocus: false,
       data: { hero }
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return
+
+      this.loadHeroes()
+      this._snackBar.open(
+        `Hero ${hero ? 'updated' : 'created'} successfully`,
+        'Close',
+        { duration: 2000 }
+      );
+    })
   }
 
   deleteHero(id: string) {
-    this.hero.delete(id)
-    this.loadHeroes()
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Delete hero',
+        message: 'Are you sure you want to delete this hero?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(!result) return
+
+      this.hero.delete(id)
+      this.loadHeroes()
+      this._snackBar.open(
+        `Hero deleted successfully`,
+        'Close',
+        { duration: 2000 }
+      );
+    });
   }
+
 
   ngOnDestroy() {
     this.destroy$.next();
