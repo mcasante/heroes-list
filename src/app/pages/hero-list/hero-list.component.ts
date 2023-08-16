@@ -1,12 +1,18 @@
 import { Component } from '@angular/core';
 import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { Subject, combineLatest, map } from "rxjs";
 import { PageEvent } from '@angular/material/paginator';
 
 import { HeroService } from '../../core/services/heroes/hero.service';
-import { Hero } from "../../core/models/hero";
+import { Hero, HeroListResponse } from "../../core/models/hero";
 import { MatDialog } from '@angular/material/dialog';
 import { CreateHeroFormComponent } from '../../components/create-hero-form/create-hero-form.component';
+
+const clamp = (
+    num: number,
+    min: number,
+    max: number
+  ): number => Math.min(Math.max(num, min), max);
 
 @Component({
   selector: 'app-hero-list',
@@ -14,14 +20,17 @@ import { CreateHeroFormComponent } from '../../components/create-hero-form/creat
   styleUrls: ['./hero-list.component.scss']
 })
 export class HeroListComponent {
-  heroes!: Hero[]
-  limit: number = 10
-  offset: number = 0
-  count!: number
-  total!: number
-
-  pageIndex: number = 0
   displayedColumns: string[] = ['thumbnail', 'id', 'name', 'description'];
+
+  heroes!: Hero[]
+  offset: number = 0
+
+  pagination = {
+    pageIndex: 0,
+    pageSize: 10,
+    total: 0,
+    pageSizeOptions: [1, 5, 10]
+  }
 
   destroy$ = new Subject<void>();
 
@@ -31,26 +40,49 @@ export class HeroListComponent {
   ) {}
 
   ngOnInit() {
-    this.loadHeroes()
+    combineLatest([
+      this.hero.remoteList({ offset: 0, limit: 1 }),
+      this.hero.localList()
+    ])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(([heroes, localHeroes]) => {
+      this.pagination.total = heroes.total + localHeroes.length
+      this.loadHeroes()
+    })
   }
 
   loadHeroes() {
-    this.hero
-      .list({ offset: this.offset, limit: this.limit })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((heroes) => {
-        this.heroes = heroes.results
-        this.limit = heroes.limit
-        this.offset = heroes.offset
-        this.count = heroes.count
-        this.total = Math.ceil(heroes.total/heroes.limit)
-      });
+    const pgsize = this.pagination.pageSize
+    const offset = this.offset
+
+    this.hero.localList()
+      .pipe()
+      .pipe(
+        takeUntil(this.destroy$),
+        map((data: Hero[]) => ({
+          total: data.length,
+          results: data.slice(offset, offset + pgsize)
+        }))
+      ).subscribe((localHeroes) => {
+        this.heroes = localHeroes.results
+
+        if(localHeroes.results.length >= pgsize) return
+
+        const offset = clamp(this.offset - localHeroes.total, 0, this.pagination.total - this.pagination.pageSize)
+
+        this.hero.remoteList({ offset, limit: pgsize - localHeroes.results.length })
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((remoteHeroes: HeroListResponse) => {
+            this.heroes = [ ...localHeroes.results, ...remoteHeroes.results]
+            this.pagination.total = (remoteHeroes.total + localHeroes.total)
+          })
+
+      })
   }
 
   handlePageEvent(e: PageEvent) {
-    console.log(e)
-    this.limit = e.pageSize
-    this.offset = (e.pageIndex) * this.limit
+    this.pagination.pageSize = e.pageSize
+    this.offset = (e.pageIndex) * this.pagination.pageSize
     this.loadHeroes()
   }
 

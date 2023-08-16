@@ -13,10 +13,13 @@
           <ng-container matColumnDef="thumbnail">
             <th mat-header-cell *matHeaderCellDef>Pic</th>
             <td mat-cell *matCellDef="let element">
+              c
               <img
                 class="thumbnail"
                 [src]="
-                  element.thumbnail.path + '.' + element.thumbnail.extension
+                  element.thumbnail.path
+                    ? element.thumbnail.path + '.' + element.thumbnail.extension
+                    : element.thumbnail || 'https://via.placeholder.com/150'
                 "
                 alt="hero thumbnail"
               />
@@ -47,10 +50,10 @@
 
       <mat-paginator
         (page)="handlePageEvent($event)"
-        [length]="total"
-        [pageSize]="limit"
-        [pageSizeOptions]="[5, 10]"
-        [pageIndex]="pageIndex"
+        [length]="pagination.total"
+        [pageSize]="pagination.pageSize"
+        [pageSizeOptions]="pagination.pageSizeOptions"
+        [pageIndex]="pagination.pageIndex"
         showFirstLastButtons
         aria-label="Select page"
       >

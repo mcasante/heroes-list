@@ -10,3 +10,16 @@ export interface Hero {
   modified?: string;
   local?: boolean;
 }
+
+export interface HeroListOptions {
+  offset: number
+  limit: number
+}
+
+export interface HeroListResponse {
+  limit: number
+  offset: number
+  count: number
+  total: number
+  results: Hero[]
+}
