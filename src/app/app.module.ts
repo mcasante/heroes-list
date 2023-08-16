@@ -7,14 +7,17 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AppRoutingModule } from './modules/app-routing.module';
 import { MaterialModule } from './modules/material.module';
 
+import { AppComponent } from './main/main.component';
+import { HeroListComponent } from './pages/hero-list/hero-list.component';
+
 import { ApiInterceptor } from "./core/interceptors/api.interceptor";
 import { LocalStorageService } from './core/services/localStorage/local-storage.service';
 import { CanvasService } from './core/services/canvas/canvas.service';
+import { ApiService } from './core/services/api/api.service';
 
-import { AppComponent } from './main/main.component';
 import { ImageUploadComponent } from './components/shared/image-upload/image-upload.component';
 import { CreateHeroFormComponent } from './components/create-hero-form/create-hero-form.component';
-import { HeroListComponent } from './pages/hero-list/hero-list.component';
+
 
 @NgModule({
   declarations: [
@@ -35,6 +38,7 @@ import { HeroListComponent } from './pages/hero-list/hero-list.component';
   providers: [
     LocalStorageService,
     CanvasService,
+    ApiService,
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]

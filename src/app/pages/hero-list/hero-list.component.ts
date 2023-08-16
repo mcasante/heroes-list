@@ -20,7 +20,7 @@ const clamp = (
   styleUrls: ['./hero-list.component.scss']
 })
 export class HeroListComponent {
-  displayedColumns: string[] = ['thumbnail', 'id', 'name', 'description'];
+  displayedColumns: string[] = ['thumbnail', 'id', 'name', 'description', 'actions'];
 
   heroes!: Hero[]
   offset: number = 0
@@ -86,11 +86,17 @@ export class HeroListComponent {
     this.loadHeroes()
   }
 
-  openDialog() {
+  openDialog(hero?: Hero) {
     this.dialog.open(CreateHeroFormComponent, {
       width: '320px',
-      autoFocus: false
+      autoFocus: false,
+      data: { hero }
     });
+  }
+
+  deleteHero(id: string) {
+    this.hero.delete(id)
+    this.loadHeroes()
   }
 
   ngOnDestroy() {

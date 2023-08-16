@@ -12,7 +12,7 @@ export class ImageUploadComponent {
 
   @Output() dataUrlEmitter: EventEmitter<string> = new EventEmitter<string>();
 
-  @Input() selectedImage: File | undefined;
+  @Input() selectedImage: string | ArrayBuffer | null = null;
 
   constructor(private canvasService: CanvasService) {}
 
@@ -20,6 +20,10 @@ export class ImageUploadComponent {
     this.canvasService.setContext(
       this.canvasRef.nativeElement.getContext('2d') as CanvasRenderingContext2D
     );
+
+    if(this.selectedImage) {
+      this.canvasService.readBuffer(this.selectedImage as ArrayBuffer);
+    }
   }
 
   onFileChange(event: any): void {

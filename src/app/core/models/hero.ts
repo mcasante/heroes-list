@@ -3,7 +3,7 @@ interface Thumbnail {
   extension: string;
 }
 export interface Hero {
-  id: number;
+  id: string;
   name: string;
   thumbnail: Thumbnail | string;
   description?: string;
