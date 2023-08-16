@@ -37,12 +37,28 @@ export class HeroService {
       .pipe(map((response) => response.data))
   }
 
-  create(hero: Hero): any { //Observable<Hero> {
-    this.storage.setItem(
-      String(hero.id),
-      JSON.stringify(hero)
-    )
+  localList(): Hero[] {
+    const storedHeroes = this.storage.getItem('heroes')
+    const heroes = storedHeroes ? JSON.parse(storedHeroes) : []
 
-    // return new Observable<Hero>(hero)
+    return heroes
+  }
+
+  createOrEdit(hero: Partial<Hero>): void {
+    const heroes = this.localList()
+
+    const found = heroes.find((item: Hero) => item.id === hero.id)
+    const newHeroes = found
+      ? heroes.map((item: Hero) => (item.id === hero.id ? hero : item))
+      : [...heroes, { ...hero, id: heroes.length + 1 }]
+
+    this.storage.setItem('heroes', JSON.stringify(newHeroes))
+  }
+
+  delete(id: number): void {
+    const heroes = this.localList()
+    const newHeroes = heroes.filter((hero: Hero) => hero.id !== id)
+
+    this.storage.setItem('heroes', JSON.stringify(newHeroes))
   }
 }

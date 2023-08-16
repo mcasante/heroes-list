@@ -5,7 +5,7 @@ interface Thumbnail {
 export interface Hero {
   id: number;
   name: string;
-  thumbnail: Thumbnail;
+  thumbnail: Thumbnail | string;
   description?: string;
   modified?: string;
   local?: boolean;
