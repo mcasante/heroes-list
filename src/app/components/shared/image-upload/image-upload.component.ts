@@ -1,4 +1,11 @@
-import { Component, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  ViewChild,
+  ElementRef,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { CanvasService } from '../../../core/services/canvas/canvas.service';
 
 @Component({
@@ -7,8 +14,10 @@ import { CanvasService } from '../../../core/services/canvas/canvas.service';
   styleUrls: ['./image-upload.component.scss'],
 })
 export class ImageUploadComponent {
-  @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('canvas', { static: false })
+  canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('fileInput', { static: false })
+  fileInput!: ElementRef<HTMLInputElement>;
 
   @Output() dataUrlEmitter: EventEmitter<string> = new EventEmitter<string>();
 
@@ -18,36 +27,34 @@ export class ImageUploadComponent {
 
   ngAfterViewInit(): void {
     this.canvasService.setContext(
-      this.canvasRef.nativeElement.getContext('2d') as CanvasRenderingContext2D
+      this.canvasRef.nativeElement.getContext('2d') as CanvasRenderingContext2D,
     );
 
-    if(this.selectedImage) {
+    if (this.selectedImage) {
       this.canvasService.readBuffer(this.selectedImage as ArrayBuffer);
     }
   }
 
   onFileChange(event: any): void {
     const file = event.target.files[0];
-    if (!file) return
+    if (!file) return;
 
     const reader = new FileReader();
 
     reader.addEventListener('load', () => {
-      this.canvasService.readBuffer(
-        reader.result as ArrayBuffer,
-        () => this.captureCanvas()
-      )
+      this.canvasService.readBuffer(reader.result as ArrayBuffer, () =>
+        this.captureCanvas(),
+      );
     });
 
     reader.readAsDataURL(file);
   }
 
   clearFileContent(): void {
-    if (!this.fileInput) return
-    this.canvasService.clear()
-    this.captureCanvas()
+    if (!this.fileInput) return;
+    this.canvasService.clear();
+    this.captureCanvas();
     this.fileInput.nativeElement.value = '';
-
   }
 
   captureCanvas(): void {

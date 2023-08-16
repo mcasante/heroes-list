@@ -12,14 +12,14 @@ export interface Hero {
 }
 
 export interface HeroListOptions {
-  offset: number
-  limit: number
+  offset: number;
+  limit: number;
 }
 
 export interface HeroListResponse {
-  limit: number
-  offset: number
-  count: number
-  total: number
-  results: Hero[]
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
+  results: Hero[];
 }

@@ -2,7 +2,15 @@
   <canvas id="canvas" #canvas></canvas>
   <div class="controls">
     <button mat-button (click)="clearFileContent()">Clear</button>
-    <input #fileInput type="file" style="display: none;" (change)="onFileChange($event)" accept="image/*">
-    <button mat-button color="primary" (click)="fileInput.click()">Load File</button>
+    <input
+      #fileInput
+      type="file"
+      style="display: none"
+      (change)="onFileChange($event)"
+      accept="image/*"
+    />
+    <button mat-button color="primary" (click)="fileInput.click()">
+      Load File
+    </button>
   </div>
 </div>
