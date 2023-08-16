@@ -59,7 +59,6 @@ export class HeroListComponent {
     const offset = this.offset
 
     this.hero.localList()
-      .pipe()
       .pipe(
         takeUntil(this.destroy$),
         map((data: Hero[]) => ({
